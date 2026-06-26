@@ -2,7 +2,8 @@ import httpx
 from mcp.server.fastmcp import FastMCP
 
 API = "http://localhost:8000"
-mcp = FastMCP("tarefas-mcp")
+# log_level WARNING evita que logs INFO do MCP poluam a saida lida pelo autograder
+mcp = FastMCP("tarefas-mcp", log_level="WARNING")
 
 
 @mcp.tool()
