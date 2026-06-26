@@ -50,5 +50,5 @@ autograde validar 4.2
 
 ## Reflexão — o que o MCP abstraiu
 
-_Em uma frase: qual detalhe da API REST o MCP tornou irrelevante para quem chama
-a tool?_
+Abstraiu o contrato/interface da API de TODO-LIST para ser usada por LLMs
+
