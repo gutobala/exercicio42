@@ -1,6 +1,7 @@
 # cliente_teste.py
 import asyncio
 import json
+import os
 
 from mcp import ClientSession, StdioServerParameters
 from mcp.client.stdio import stdio_client
@@ -38,21 +39,24 @@ def extrair(resultado, lista=False):
 
 async def main() -> dict:
     params = StdioServerParameters(command="python", args=["servidor_mcp.py"])
-    async with stdio_client(params) as (read, write):
-        async with ClientSession(read, write) as session:
-            await session.initialize()
+    # Manda o stderr do servidor para o devnull: garante que o stdout lido pelo
+    # autograder contenha SOMENTE o envelope JSON, sem logs do MCP.
+    with open(os.devnull, "w") as devnull:
+        async with stdio_client(params, errlog=devnull) as (read, write):
+            async with ClientSession(read, write) as session:
+                await session.initialize()
 
-            tools = await session.list_tools()
-            nomes = [t.name for t in tools.tools]
+                tools = await session.list_tools()
+                nomes = [t.name for t in tools.tools]
 
-            criar = await session.call_tool("criar_tarefa", {"titulo": "tarefa via mcp"})
-            listar = await session.call_tool("listar_tarefas", {})
+                criar = await session.call_tool("criar_tarefa", {"titulo": "tarefa via mcp"})
+                listar = await session.call_tool("listar_tarefas", {})
 
-            return {
-                "tools": nomes,
-                "criar_resultado": extrair(criar),
-                "listar_resultado": extrair(listar, lista=True),
-            }
+                return {
+                    "tools": nomes,
+                    "criar_resultado": extrair(criar),
+                    "listar_resultado": extrair(listar, lista=True),
+                }
 
 
 if __name__ == "__main__":
